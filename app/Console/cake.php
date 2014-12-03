@@ -1,5 +1,4 @@
-#!/usr/bin/php -q
-<?php
+asasdasdasdassda#!/usr/bin/php -q
 /**
  * Command-line code generation utility to automate programmer chores.
  *

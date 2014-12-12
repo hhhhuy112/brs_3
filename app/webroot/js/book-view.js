@@ -81,7 +81,7 @@ $(function(){
     });
 
     // Submit new comment
-    $(".btn-submit-comment").on('click', function () {
+    $(".submit-comment").on('click', function () {
         var reviewId = this.id;
         reviewId = reviewId.substring(reviewId.lastIndexOf('-') + 1);
         var comment = $("#comment-area-" + reviewId).val();
@@ -128,6 +128,58 @@ $(function(){
                 action: "addRating"
             },
             success : function(response){
+            }
+        });
+    });
+
+    function showUpdateReviewButton() {
+        $("#modify-review").toggleClass("hidden");
+    }
+
+    function showUpdateCommentButton(id) {
+        $(".modify-comment").addClass("hidden");
+        $("#modify-comment-" + id).toggleClass("hidden");
+    }
+
+    $(".update-review").click(function(){
+        $("#modify-review").toggleClass("hidden");
+        var elementId   = this.id;
+        var reviewId    = elementId.substring(elementId.lastIndexOf('-') + 1);
+        var type        = elementId.substring(0, elementId.indexOf('-'));
+        $.ajax({
+            url : "/books/view/" + bookId,
+            type: 'POST',
+            data: {
+                updatedReview: $("#modifiable-review").text(),
+                action: "modify-review",
+                reviewId: reviewId,
+                type: type
+            },
+            success : function(response){
+                if (type === 'remove') {
+                    $(".updateable-review").remove();
+                }
+            }
+        });
+    });
+
+    $(".update-comment").on('click', function() {
+        var elementId = this.id;
+        var type = elementId.substring(0, elementId.indexOf('-'));
+        var commentId = elementId.substring(elementId.lastIndexOf('-') + 1);
+        $.ajax({
+            url : "/books/view/" + bookId,
+            type: 'POST',
+            data: {
+                action: "modify-comment",
+                conmment: $("#comment-contain-" + commentId).text(),
+                type: type,
+                commentId: commentId
+            },
+            success : function(response) {
+                if (type === 'remove') {
+                    $("#comment-" + commentId).remove();
+                }
             }
         });
     });

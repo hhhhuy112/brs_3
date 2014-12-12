@@ -130,4 +130,47 @@ class Book extends AppModel {
         }
         return ($count == 0) ? (0.0) : ($totalRate / $count);
     }
+
+    public function modifyReview($requestData) {
+        $reviewId = $requestData['reviewId'];
+        if ($requestData['type'] === 'edit') {
+            $this->Review->id = $reviewId;
+            $this->Review->save(array('review' => $requestData['updatedReview']));
+        } else {
+            $this->Review->delete($reviewId, true);
+        }
+        $this->Review->clear();
+    }
+
+    public function modifyComment($requestData) {
+        if ($requestData['type'] === 'edit') {
+            $this->Review->Comment->id = $requestData['commentId'];
+            $this->Review->Comment->save(array('comment' => trim($requestData['conmment'])));
+        } else {
+            $this->Review->Comment->delete($requestData['commentId'], true);
+        }
+        $this->Review->Comment->clear();
+    }
+
+    public function getFavoriteBookByUserId($userId) {
+        $favoriteBooks = $this->BookUser->find('all',
+            array(
+                'conditions' => array(
+                    'BookUser.user_id'     => $userId,
+                    'BookUser.is_favorite' => true
+                )
+            )
+        );
+        $favoriteBookIds = array();
+        foreach ($favoriteBooks as $favoriteBook) {
+            $favoriteBookIds[] = $favoriteBook['BookUser']['book_id'];
+        }
+        
+        $books = $this->find('all', array('conditions' => array('Book.id IN' => $favoriteBookIds)));
+        $favoriteBooks = array();
+        foreach ($books as $book) {
+            $favoriteBooks[] = $book['Book'];
+        }
+        return $favoriteBooks;
+    }
 }

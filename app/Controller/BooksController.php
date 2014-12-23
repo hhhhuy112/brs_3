@@ -50,6 +50,7 @@ class BooksController extends AppController {
         $this->set('reviewers', $reviewers);
         $this->set('reviews', $book['Review']);
         $this->set('rate', $this->Book->getBookRate($id));
+        $this->set('categoryName', $book['Category']['name']);
         $this->set('bookUserDetails', $this->Book->BookUser->findByBookIdAndUserId($id, $userId));
 
         // Action in view page
@@ -74,6 +75,12 @@ class BooksController extends AppController {
                     break;
                 case 'favorite':
                     $this->Book->markFavorite($requestData['bookId'], $userId);
+                    break;
+                case 'modify-review':
+                    $this->Book->modifyReview($requestData);
+                    break;
+                case 'modify-comment':
+                    $this->Book->modifyComment($requestData);
                     break;
                 default:
                     break;

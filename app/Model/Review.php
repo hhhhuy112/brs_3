@@ -7,6 +7,7 @@ App::uses('AppModel', 'Model');
  * @property Comment $Comment
  */
 class Review extends AppModel {
+
     /**
      * Validation rules
      *
@@ -47,7 +48,7 @@ class Review extends AppModel {
         'Comment' => array(
             'className' => 'Comment',
             'foreignKey' => 'review_id',
-            'dependent' => false,
+            'dependent' => true,
             'conditions' => '',
             'fields' => '',
             'order' => '',
@@ -59,4 +60,13 @@ class Review extends AppModel {
         )
     );
 
+    public function getReviewByUserId($userId) {
+        $userReviews = array();
+        $reviews = $this->findAllByUserId($userId);
+        foreach ($reviews as $review) {
+            $review['Review']['book'] = $review['Book'];
+            $userReviews[] = $review['Review'];
+        }
+        return $userReviews;
+    }
 }
